@@ -10,10 +10,14 @@ services:
       - "5000:5000"
     command: bash -c "python3 init_db.py && flask --app main run --port 5000 --host=0.0.0.0"
     environment:
-      FLASK_APP: init_db.py
       DATABASE_URL: ${DATABASE_URL}
+      FLASK_DEBUG: true
+      FLASK_APP: init_db.py
+      FLASK_ENV: development
     depends_on:
-      - database
+      database:
+        condition: service_healthy
+        restart: true
     volumes:
       - ./app/migrations:/app/migrations
 
@@ -26,6 +30,10 @@ services:
       POSTGRES_DB: ${DATABASE_NAME}
     ports:
       - "5432"
+    healthcheck:
+      test: [ "CMD", 'psql', '-U', "tech", 'main' ]
+      timeout: 2s
+      retries: 5
 
 volumes:
   migrations:
