@@ -1,4 +1,5 @@
 import json
+from operator import or_
 
 import jsonpickle
 
@@ -29,3 +30,15 @@ def getMatch():
              .one())
     for row in match:
         return jsonify(row)
+
+
+@app_route.route('/getMatches', methods=['GET'])
+def getMatches():
+    session = Session()
+    userId: str = request.args.get('user')
+    result = (session.execute(select(Match)
+                              .where(or_(Match.user1_id == int(userId),
+                                         Match.user2_id == int(userId))))
+              .all())
+    matches = [tuple(row) for row in result]
+    return jsonify(matches)
