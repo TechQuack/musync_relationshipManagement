@@ -41,13 +41,11 @@ def upgrade():
     op.create_table('top_listened_artist',
     sa.Column('top_listened_artist', sa.String(length=255), nullable=False),
     sa.Column('top_ranking', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('top_listened_artist')
     )
     op.create_table('top_listened_music',
     sa.Column('top_listened_music', sa.String(length=255), nullable=False),
     sa.Column('artist_name', sa.String(length=255), nullable=True),
     sa.Column('top_ranking', sa.Integer(), nullable=False),
-    sa.PrimaryKeyConstraint('top_listened_music')
     )
     op.create_table('match',
     sa.Column('match_id', sa.Integer(), nullable=False),
@@ -63,8 +61,6 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('top_listened_artist', sa.String(), nullable=True),
     sa.Column('top_listened_music', sa.String(), nullable=True),
-    sa.ForeignKeyConstraint(['top_listened_artist'], ['top_listened_artist.top_listened_artist'], ),
-    sa.ForeignKeyConstraint(['top_listened_music'], ['top_listened_music.top_listened_music'], ),
     sa.ForeignKeyConstraint(['user_id'], ['musync_user.user_id'], ),
     sa.PrimaryKeyConstraint('user_id')
     )

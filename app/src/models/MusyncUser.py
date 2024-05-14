@@ -32,3 +32,16 @@ class MusyncUser(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.user_id
+
+    def __init__(self, user_id, is_certified, birthdate, gender, accepted_age_gap, accepted_distance,
+                 targeted_gender, favorite_musician, favorite_music, favorite_musical_style):
+        self.user_id = user_id
+        self.is_certified = is_certified
+        self.birthdate = birthdate
+        self.gender = gender
+        self.accepted_age_gap = accepted_age_gap
+        self.accepted_distance = accepted_distance
+        self.targeted_gender = targeted_gender
+        self.favorite_musician = favorite_musician
+        self.favorite_music = favorite_music
+        self.favorite_musical_style = favorite_musical_style

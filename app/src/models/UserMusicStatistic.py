@@ -1,13 +1,33 @@
+from dataclasses import dataclass
+from typing import List
+
 from init_db import *
 from src.models.TopListenedArtist import TopListenedArtist
 from src.models.TopListenedMusic import TopListenedMusic
+from sqlalchemy.orm import Mapped
 
 
+@dataclass
 class UserMusicStatistic(db.Model):
     user_id: int
-    top_listened_artist: TopListenedArtist
-    top_listened_music: TopListenedMusic
+    top_listened_artists: Mapped[List["TopListenedArtist"]] = db.relationship("TopListenedArtist",
+                                                                              backref='userMusicStatistic',
+                                                                              lazy=True,
+                                                                              cascade="save-update, merge, "
+                                                                                      "delete, delete-orphan")
+
+    top_listened_musics: Mapped[List["TopListenedMusic"]] = db.relationship("TopListenedMusic",
+                                                                            backref='userMusicStatistic',
+                                                                            lazy=True,
+                                                                            cascade="save-update, merge, "
+                                                                                    "delete, delete-orphan")
+
+
 
     user_id = db.Column(db.Integer, db.ForeignKey("musync_user.user_id"), primary_key=True)
-    top_listened_artist = db.Column(db.String, db.ForeignKey("top_listened_artist.top_listened_artist"))
-    top_listened_music = db.Column(db.String, db.ForeignKey("top_listened_music.top_listened_music"))
+
+    def __init__(self, user_id: int):
+        self.user_id = user_id
+
+    def __repr__(self):
+        return '<Statistic %r>' % self.user_id

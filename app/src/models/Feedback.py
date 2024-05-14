@@ -1,6 +1,9 @@
+from dataclasses import dataclass
+
 from init_db import *
 
 
+@dataclass
 class Feedback(db.Model):
     match_id: int
     user1_id: int
