@@ -1,8 +1,13 @@
+import datetime
+from datetime import datetime
+from operator import and_, or_
 from typing import List
+from sqlalchemy import desc
 
 from sqlalchemy import select
 
 from init_db import Session
+from src.models.Match import Match
 from src.models.MusyncUser import MusyncUser
 from src.models.UserMusicStatistic import UserMusicStatistic
 
@@ -62,3 +67,113 @@ def updateUserMusicInformation(data) -> UserMusicStatistic:
     session.commit()
     session.close()
     return userMusicStatistic
+
+
+def getAllPossibleCombination(user: MusyncUser) -> List[Match]:
+    if user.is_certified:
+        return list()
+    session = Session()
+    userTargetedGender = user.targeted_gender
+    userAge = __getUserAge(session.query(MusyncUser.birthdate).filter(MusyncUser.user_id == user.user_id)
+                           .one())
+    userAgeGap = user.accepted_age_gap
+    userDistanceGap = user.accepted_distance
+    userLocation = 0  # TODO
+    users = session.query(MusyncUser).filter(MusyncUser.user_id != user.user_id).all()
+    matches: List[Match] = list()
+    match_id: int = 0
+    match = session.query(Match.match_id).order_by(desc(Match.match_id)).limit(1).first()
+    if match is not None:
+        match_id = match.match_id + 1
+    for musyncUser in users:
+        if musyncUser.gender == userTargetedGender and __getUserAge(musyncUser) - userAge <= userAgeGap \
+                and not musyncUser.is_certified:
+            match: Match = Match(match_id, user.user_id, musyncUser.user_id, 50,
+                                 Match.MATCH_USER1)
+            match_id += 1
+            matches.append(match)
+    session.close()
+    return matches
+
+
+def filterByMusicTaste(combinations: List[Match], userStatistic: UserMusicStatistic) -> List[Match]:
+    session: Session = Session()
+    result: List[Match] = list()
+    for combination in combinations:
+        user2Id = combination.user2_id
+        userStatistic2 = (session.query(UserMusicStatistic).filter(UserMusicStatistic.user_id == user2Id)
+                          .one())
+        compatibility = evaluateCompatibility(userStatistic, userStatistic2)
+        if compatibility > 50:
+            combination.match_compatibility = compatibility
+            result.append(combination)
+    session.close()
+    return result
+
+
+def evaluateCompatibility(userStatistic: UserMusicStatistic, userStatistic2: UserMusicStatistic) -> int:
+    from src.models.TopListenedArtist import TopListenedArtist
+    from src.models.TopListenedMusic import TopListenedMusic
+    topListenedArtist1: List[TopListenedArtist] = userStatistic.top_listened_artists
+    topListenedArtist2: List[TopListenedArtist] = userStatistic2.top_listened_artists
+    result: int = 0
+    topListenedArtist2Names = [artist.top_listened_artist for artist in topListenedArtist2]
+    for artist in topListenedArtist1:
+        if artist.top_listened_artist in topListenedArtist2Names:
+            if artist.top_ranking == 1:
+                result += 25
+            elif artist.top_ranking == 2:
+                result += 10
+            else:
+                result += 5
+    topListenedMusic1: List[TopListenedMusic] = userStatistic.top_listened_musics
+    topListenedMusic2: List[TopListenedMusic] = userStatistic2.top_listened_musics
+    topListenedMusic2Artists = [music.artist_name for music in topListenedMusic2]
+    topListenedMusic2Musics = [music.top_listened_music for music in topListenedMusic2]
+    for music in topListenedMusic1:
+        if (music.top_listened_music in topListenedMusic2Musics
+                and music.artist_name in topListenedMusic2Artists):
+            if music.top_ranking == 1:
+                result += 25
+            elif music.top_ranking == 2:
+                result += 10
+            else:
+                result += 5
+        elif music.artist_name in topListenedMusic2Artists:
+            if music.top_ranking == 1:
+                result += 10
+            elif music.top_ranking == 2:
+                result += 6.5
+            else:
+                result += 3.5
+    return result
+
+
+def saveMatches(matches: List[Match]):
+    session: Session = Session()
+    for match in matches:
+        session.merge(match)
+        session.commit()
+    session.close()
+
+
+def updateStatus(match_id: int, user_id: int, status: bool) -> Match | None:
+    session = Session()
+    if status:
+        newStatus = Match.MATCH
+    else:
+        newStatus = Match.END_MATCH
+    match = session.query(Match).where(and_(Match.match_id == match_id,
+                                            or_(Match.user1_id == user_id, Match.user2_id == user_id))
+                                       )
+    if match.first() is None:
+        return None
+    match.update({'status_code': newStatus})
+    session.commit()
+    session.close()
+    return match.first()
+
+
+def __getUserAge(user: MusyncUser):
+    userAge = datetime.now() - user.birthdate.replace(tzinfo=None)
+    return userAge.days / 365

@@ -22,7 +22,6 @@ def upgrade():
     sa.Column('match_id', sa.Integer(), nullable=False),
     sa.Column('score_user1', sa.Integer(), nullable=True),
     sa.Column('score_user2', sa.Integer(), nullable=True),
-    sa.PrimaryKeyConstraint('match_id')
     )
     op.create_table('musync_user',
     sa.Column('user_id', sa.Integer(), nullable=False),
@@ -48,14 +47,13 @@ def upgrade():
     sa.Column('top_ranking', sa.Integer(), nullable=False),
     )
     op.create_table('match',
-    sa.Column('match_id', sa.Integer(), nullable=False),
+    sa.Column('match_id', sa.Integer(), nullable=False, autoincrement=True),
     sa.Column('user1_id', sa.Integer(), nullable=True),
     sa.Column('user2_id', sa.Integer(), nullable=True),
     sa.Column('match_compatibility', sa.Integer(), nullable=True),
     sa.Column('status_code', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user1_id'], ['musync_user.user_id'], ),
     sa.ForeignKeyConstraint(['user2_id'], ['musync_user.user_id'], ),
-    sa.PrimaryKeyConstraint('match_id')
     )
     op.create_table('user_music_statistic',
     sa.Column('user_id', sa.Integer(), nullable=False),
