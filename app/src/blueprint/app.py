@@ -4,6 +4,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import select
 
 from init_db import *
+from src.models.Feedback import Feedback
 from src.models.Match import Match
 from src.models.MusyncUser import MusyncUser
 from src.models.UserMusicStatistic import UserMusicStatistic
@@ -77,3 +78,46 @@ def deleteMatch(matchId: int):
     session.commit()
     session.close()
     return jsonify(match)
+
+
+@app_route.route('/getFeedback/<feedbackId>', methods=['GET'])
+def getFeedback(feedbackId: int):
+    session = Session()
+    feedback: Feedback = session.query(Feedback).where(Feedback.match_id == feedbackId).first()
+    if feedback is None:
+        return "No feedback found", 404
+    session.close()
+    return jsonify(feedback)
+
+
+@app_route.route('/postFeedback', methods=['POST'])
+def postFeedback():
+    request_data = request.get_json()
+    match_id: int = request_data["match_id"]
+    user_id: int = request_data["user_id"]
+    score: int = request_data["score"]
+    feedback: Feedback = RelationshipService.changeFeedback(match_id, user_id, score)
+    if feedback is None:
+        return "Error, the user is not concerned by this match", 403
+    return jsonify(feedback)
+
+
+@app_route.route('/updateUserInformation', methods=['PUT'])
+def updateUserInformation():
+    request_data = request.get_json()
+    user: MusyncUser = RelationshipService.updateUserInformation(request_data)
+    return jsonify(user)
+
+
+@app_route.route('/updateUserMusicStatisticInformation', methods=['PUT'])
+def updateUserMusicStatisticInformation():
+    request_data = request.get_json()
+    user_music_statistic_data = request_data["UserMusicStatistic"]
+    user_id = user_music_statistic_data["user_id"]
+    session: Session = Session()
+    user = session.query(MusyncUser).where(MusyncUser.user_id == user_id).first()
+    if user is None:
+        return "No user found", 404
+    userMusicStatistic: UserMusicStatistic = (
+        RelationshipService.updateUserMusicInformation(user_music_statistic_data))
+    return jsonify(userMusicStatistic)

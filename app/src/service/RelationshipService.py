@@ -7,6 +7,7 @@ from sqlalchemy import desc
 from sqlalchemy import select
 
 from init_db import Session
+from src.models.Feedback import Feedback
 from src.models.Match import Match
 from src.models.MusyncUser import MusyncUser
 from src.models.UserMusicStatistic import UserMusicStatistic
@@ -173,6 +174,30 @@ def updateStatus(match_id: int, user_id: int, status: bool) -> Match | None:
     session.close()
     return match.first()
 
+
+def changeFeedback(match_id: int, user_id: int, score: int) -> Feedback | None:
+    session = Session()
+    match: Match = session.query(Match).where(Match.match_id == match_id).first()
+    if match is None:
+        return None
+    feedback = session.query(Feedback).where(Feedback.match_id == match_id).first()
+    score_user1: int = 0
+    score_user2: int = 0
+    if feedback is not None:
+        score_user1 = feedback.score_user1
+        score_user2 = feedback.score_user2
+    if user_id == match.user1_id:
+        feedback = Feedback(match_id=match_id, user1_id=match.user1_id, user2_id=match.user2_id,
+                            score_user1=score, score_user2=score_user2)
+    elif user_id == match.user2_id:
+        feedback = Feedback(match_id=match_id, user1_id=match.user1_id, user2_id=match.user2_id,
+                            score_user1=score_user1, score_user2=score)
+    else:
+        return None
+    session.merge(feedback)
+    session.commit()
+    session.close()
+    return feedback
 
 def __getUserAge(user: MusyncUser):
     userAge = datetime.now() - user.birthdate.replace(tzinfo=None)

@@ -11,8 +11,8 @@ class Feedback(db.Model):
     score_user1: int
     score_user2: int
 
-    match_id = db.Column(db.Integer, primary_key=True)
-    user1_id = db.relationship('MusyncUser', backref="musync_user", lazy=True)
-    user2_id = db.relationship('MusyncUser', backref="musync_user", lazy=True)
+    match_id = db.Column(db.Integer, primary_key=False, unique=True)
+    user1_id = db.Column(db.Integer, db.ForeignKey("musync_user.user_id"), primary_key=True)
+    user2_id = db.Column(db.Integer, db.ForeignKey("musync_user.user_id"), primary_key=True)
     score_user1 = db.Column(db.Integer)
     score_user2 = db.Column(db.Integer)
