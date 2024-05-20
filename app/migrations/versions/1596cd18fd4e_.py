@@ -15,3 +15,7 @@ down_revision = 'b27d7e107d9f'
 branch_labels = None
 depends_on = None
 
+def upgrade():
+    return
+def downgrade():
+    return
