@@ -1,0 +1,197 @@
+{
+	"info": {
+		"_postman_id": "6d34b7a0-3e71-4e75-9284-21cee6825ecf",
+		"name": "MatchService",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "33746058"
+	},
+	"item": [
+		{
+			"name": "postMatches",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/xml"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"MusyncUser\": \r\n    {\r\n        \"user_id\": 2,\r\n        \"is_certified\": false,\r\n        \"birthdate\": \"2024-04-07 06:31:11.891257+00\",\r\n        \"gender\": \"female\",\r\n        \"accepted_age_gap\": 1,\r\n        \"accepted_distance\": 2,\r\n        \"targeted_gender\": \"female\",\r\n        \"favorite_musician\": 2,\r\n        \"favorite_music\": 3,\r\n        \"favorite_musical_style\": 12\r\n    },\r\n    \"UserMusicStatistic\":\r\n    {\r\n        \"user_id\": 2,\r\n        \"top_listened_artist\":\r\n        [   {\r\n                \"top_listened_artist\": \"Justin Bieber\",\r\n                \"top_ranking\": 1\r\n            },\r\n            {\r\n                \"top_listened_artist\": \"Justiebr\",\r\n                \"top_ranking\": 2\r\n            },\r\n            {\r\n                \"top_listened_artist\": \"Justin Biebr\",\r\n                \"top_ranking\": 3\r\n            }\r\n        ],\r\n        \"top_listened_music\":\r\n        [\r\n            {\r\n                \"top_listened_music\": \"test\",\r\n                \"artist_name\": \"Bieber\",\r\n                \"top_ranking\": 1\r\n            },\r\n            {\r\n                \"top_listened_music\": \"test\",\r\n                \"artist_name\": \"Bieber\",\r\n                \"top_ranking\": 2\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/postMatches"
+			},
+			"response": []
+		},
+		{
+			"name": "updateMatch",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"match_id\": 0,\r\n    \"user_id\": 1,\r\n    \"has_matched\": false \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/updateMatch"
+			},
+			"response": []
+		},
+		{
+			"name": "deleteMatch",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/deleteMatch/6",
+					"host": [
+						"{{SERVER_ADRESS}}"
+					],
+					"port": "{{SERVER_PORT}}",
+					"path": [
+						"deleteMatch",
+						"6"
+					],
+					"query": [
+						{
+							"key": "match_id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMatches",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/getMatches/1"
+			},
+			"response": []
+		},
+		{
+			"name": "getMatch",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/getMatch/1/3"
+			},
+			"response": []
+		},
+		{
+			"name": "getFeedback",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/getFeedback/1"
+			},
+			"response": []
+		},
+		{
+			"name": "postFeedback",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"match_id\": 2,\r\n    \"user_id\": 3,\r\n    \"score\": 4\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/postFeedback"
+			},
+			"response": []
+		},
+		{
+			"name": "updateUserInformation",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"MusyncUser\": \r\n    {\r\n        \"user_id\": 5,\r\n        \"is_certified\": false,\r\n        \"birthdate\": \"2024-04-07 06:31:11.891257+00\",\r\n        \"gender\": \"male\",\r\n        \"accepted_age_gap\": 1,\r\n        \"accepted_distance\": 2,\r\n        \"targeted_gender\": \"female\",\r\n        \"favorite_musician\": 2,\r\n        \"favorite_music\": 3,\r\n        \"favorite_musical_style\": 12\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/updateUserInformation"
+			},
+			"response": []
+		},
+		{
+			"name": "updateUserMusicStatisticInformation",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"UserMusicStatistic\":\r\n    {\r\n        \"user_id\": 8,\r\n        \"top_listened_artist\":\r\n        [   {\r\n                \"top_listened_artist\": \"Justine Bir\",\r\n                \"top_ranking\": 1\r\n            },\r\n            {\r\n                \"top_listened_artist\": \"Justiebr\",\r\n                \"top_ranking\": 2\r\n            },\r\n            {\r\n                \"top_listened_artist\": \"Justin Biebr\",\r\n                \"top_ranking\": 3\r\n            }\r\n        ],\r\n        \"top_listened_music\":\r\n        [\r\n            {\r\n                \"top_listened_music\": \"test\",\r\n                \"artist_name\": \"Bieber\",\r\n                \"top_ranking\": 1\r\n            },\r\n            {\r\n                \"top_listened_music\": \"test\",\r\n                \"artist_name\": \"Bieber\",\r\n                \"top_ranking\": 2\r\n            }\r\n        ]\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "{{SERVER_ADRESS}}:{{SERVER_PORT}}/updateUserMusicStatisticInformation"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "SERVER_ADRESS",
+			"value": "http://localhost",
+			"type": "string"
+		},
+		{
+			"key": "SERVER_PORT",
+			"value": "5000",
+			"type": "string"
+		}
+	]
+}

@@ -10,7 +10,7 @@ We can use this command to launch RelationshipManagement:
 docker compose up --build
 ```
 
-## Access to RelationshopManagement
+## Access to RelationshipManagement
 
 The RelationshipManagement routes are accessible at the following address :
 
@@ -18,4 +18,4 @@ The RelationshipManagement routes are accessible at the following address :
 http://localhost:5000/
 ```
 
-This microservice use REST, a Postman collection is accessible with examples of requests. 
+This microservice uses REST, a Postman collection is accessible with examples of requests. 
