@@ -4,8 +4,6 @@ from operator import and_, or_
 from typing import List
 from sqlalchemy import desc
 
-from sqlalchemy import select
-
 from init_db import Session
 from src.models.Feedback import Feedback
 from src.models.Match import Match
@@ -87,7 +85,7 @@ def getAllPossibleCombination(user: MusyncUser) -> List[Match]:
     if match is not None:
         match_id = match.match_id + 1
     for musyncUser in users:
-        if musyncUser.gender == userTargetedGender and __getUserAge(musyncUser) - userAge <= userAgeGap \
+        if musyncUser.gender == userTargetedGender and abs(__getUserAge(musyncUser) - userAge) <= userAgeGap \
                 and not musyncUser.is_certified:
             match: Match = Match(match_id, user.user_id, musyncUser.user_id, 50,
                                  Match.MATCH_USER1)
