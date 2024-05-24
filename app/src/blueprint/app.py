@@ -1,8 +1,10 @@
 from operator import or_, and_
 
+import jsonpickle
 from flask import Blueprint, request, jsonify
+from jsonpickle import json
 from sqlalchemy import select
-
+from kafka import KafkaProducer, KafkaConsumer, TopicPartition
 from init_db import *
 from src.models.Feedback import Feedback
 from src.models.Match import Match
@@ -11,6 +13,14 @@ from src.models.UserMusicStatistic import UserMusicStatistic
 from src.service import RelationshipService
 
 app_route = Blueprint('app_route', __name__, template_folder='templates')
+
+TOPICS = ['MATCH']
+BOOTSTRAP_SERVERS = ['kafka:9092']
+
+producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS, value_serializer=lambda m: json.dumps(m).encode('ascii'))
+consumer = KafkaConsumer('MATCH', bootstrap_servers=BOOTSTRAP_SERVERS,
+                         value_deserializer=lambda m: json.loads(m.decode('ascii')),
+                         auto_offset_reset='earliest', enable_auto_commit=True, group_id='test')
 
 
 @app_route.route('/')
@@ -65,6 +75,7 @@ def updateMatch():
     match: Match = RelationshipService.updateStatus(match_id, user_id, has_matched)
     if match is None:
         return "No match found", 404
+    producer.send("MATCH", value=jsonpickle.encode(match))
     return jsonify(match)
 
 
