@@ -18,9 +18,13 @@ TOPICS = ['MATCH']
 BOOTSTRAP_SERVERS = ['kafka:9092']
 
 producer = KafkaProducer(bootstrap_servers=BOOTSTRAP_SERVERS, value_serializer=lambda m: json.dumps(m).encode('ascii'))
-consumer = KafkaConsumer('MATCH', bootstrap_servers=BOOTSTRAP_SERVERS,
-                         value_deserializer=lambda m: json.loads(m.decode('ascii')),
-                         auto_offset_reset='earliest', enable_auto_commit=True, group_id='test')
+profileConsumer = KafkaConsumer('PROFILE', bootstrap_servers=BOOTSTRAP_SERVERS,
+                                value_deserializer=lambda m: json.loads(m.decode('ascii')),
+                                auto_offset_reset='earliest', enable_auto_commit=True, group_id='test')
+
+statConsumer = KafkaConsumer('STATISTIC', bootstrap_servers=BOOTSTRAP_SERVERS,
+                             value_deserializer=lambda m: json.loads(m.decode('ascii')),
+                             auto_offset_reset='earliest', enable_auto_commit=True, group_id='test')
 
 
 @app_route.route('/')
